@@ -25,6 +25,7 @@ class CallableController extends \yii\web\Controller
 
 		if( $tmpStr == $signature ){
 			echo $_GET["echostr"];
+			die;
 			// return true;
 
 		}else{
