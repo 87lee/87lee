@@ -24,12 +24,13 @@ class CallableController extends \yii\web\Controller
 
 
 		if( $tmpStr == $signature ){
+			Yii::trace('验证成功');
 			echo $_GET["echostr"];
 			die;
 			// return true;
 
 		}else{
-
+			Yii::trace('验证失败');
 			return false;
 
 		}
