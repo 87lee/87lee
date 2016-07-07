@@ -41,13 +41,14 @@ $config = [
 	            	],
 	        	],
 	        	'db' => require(__DIR__ . '/db.php'),
-	        	/*'urlManager' => [
+	        	'urlManager' => [
 	            	'enablePrettyUrl' => true,
 	            	'showScriptName' => true,
 	            	'rules' => [
-	            		'style.com/index.php?r=collectiveWeiXin/default/index'=>'collectiveWeiXin/default/index'
+	            		'collectiveWeiXin/callable'=>'collectiveWeiXin/callable/index',
+	            		// 'collectiveWeiXin/callable/index'=>'collectiveWeiXin/callable/index',
 	            	],
-	        	],*/
+	        	],
 
     	],
     	'params' => $params,

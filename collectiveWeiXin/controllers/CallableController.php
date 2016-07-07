@@ -1,16 +1,20 @@
 <?php
 
 namespace app\collectiveWeiXin\controllers;
-
+use Yii;
 class CallableController extends \yii\web\Controller
 {
     	public function actionIndex()
     	{
-	    	$signature = $_GET["signature"];
+    		$request = Yii::$app->request;
 
-	        	$timestamp = $_GET["timestamp"];
+		$get = $request->get();
 
-	        	$nonce = $_GET["nonce"];
+	    	$signature = $request->get("signature",1);
+
+	        	$timestamp = $request->get("timestamp",1) ;
+
+	        	$nonce = $request->get("nonce",1) ;
 
 		$token = 'pgk123';
 
@@ -25,7 +29,7 @@ class CallableController extends \yii\web\Controller
 
 		if( $tmpStr == $signature ){
 			Yii::trace('验证成功');
-			echo $_GET["echostr"];
+			echo $request->get("echostr",1);
 			die;
 			// return true;
 
