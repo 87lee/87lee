@@ -16,6 +16,9 @@ $config = [
         		'cache' => [
             		'class' => 'yii\caching\FileCache',
         		],
+        		'assetManager' => [ 
+			        'linkAssets' => true, 
+			    ],
 	        	'user' => [
 	            	'identityClass' => 'app\models\User',
 	            	'enableAutoLogin' => true,
@@ -49,6 +52,7 @@ $config = [
 	            		// 'collectiveWeiXin/callable/index'=>'collectiveWeiXin/callable/index',
 	            	],
 	        	],
+
 
     	],
     	'params' => $params,

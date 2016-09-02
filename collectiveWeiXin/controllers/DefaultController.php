@@ -8,5 +8,5 @@ class DefaultController extends \yii\web\Controller
 	{
 		// die('这是默认的控制器');
 	}
-
+	
 }
