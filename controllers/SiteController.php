@@ -36,8 +36,8 @@ class SiteController extends Controller
 
     public function actionDeleteCache()
     {
-        Yii::app()->cache->flush();
-        // \vendor\myVendorName\myPackageName\assets\AppAsset::register($this); 
+        Yii::$app->cache->flush();
+        \vendor\myVendorName\myPackageName\assets\AppAsset::register($this); 
         echo '1';
     }
 
