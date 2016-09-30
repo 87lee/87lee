@@ -1,30 +1,68 @@
 <?php
 
-namespace app\collectiveWeiXin\controllers;
-use Yii;
-class CallableController extends \yii\web\Controller
+namespace Home\Common\Lib;
+
+use Org\Util\Curl;
+
+class WeiChat
 {
-	public function actionIndex()
-	{
 
-		$request = Yii::$app->request;
-		$get = $request->get();
-		//验证回调域名
-		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr']) ) {
-			$tmpArr = array(Yii::$app->params['collectiveWeixinConfig']['token'], $get['timestamp'], $get['nonce']);
-			sort($tmpArr, SORT_STRING);
-			$tmpStr = implode( $tmpArr );
-			$tmpStr = sha1( $tmpStr );
-			if( $tmpStr == $get['signature'] ){
-				echo $get['echostr'];
-				die;
-			}else{
-				return false;
-			}
-		}
-	}
+    private $token;
 
-	/**
+    private $appId;
+
+    private $appSecret;
+
+    private $encodingAesKey;
+
+    private $signature;
+
+    private $msgSignature;
+
+    private $timestamp;
+
+    private $nonce;
+
+    public $baseText = '真开心被你关注，小哇在此恭候多时了 /:coffee
+
+领福利请点击菜单：【签到赚钱】
+
+小哇全心为你服务，是你煲剧路上的小伙伴哦~
+更多福利，请到菜单栏查看，有惊喜哦！';
+    //public $baseText="点击下方菜单栏<a href='http://mp.vsoontech.com/PHP/Wavideo/Home/Autumn/index'>【中秋活动】</a>即可参与活动。活动截止时间为2016年09.15晚24点，结果公布时间为2016.09.16日中午12点。";
+
+    public $apiList = array(
+        //获取accessToken
+        'getToken' => 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s', 
+        //创建自定义菜单
+        'create' => 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s', 
+        //获取菜单列表
+        'get' => 'https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s');
+
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function getAppId()
+    {
+        return $this->appId;
+    }
+
+    public function getAppSecret()
+    {
+        return $this->appSecret;
+    }
+
+    public function __construct($config)
+    {
+        isset($config['TOKEN']) && $this->token = $config['TOKEN'];
+        isset($config['APP_ID']) && $this->appId = $config['APP_ID'];
+        isset($config['APP_SECRET']) && $this->appSecret = $config['APP_SECRET'];
+        isset($config['ENCODINGAESKEY']) && $this->encodingAesKey = $config['ENCODINGAESKEY'];
+    }
+
+    /**
      * 签名验证
      *
      *
@@ -33,6 +71,17 @@ class CallableController extends \yii\web\Controller
      */
     public function access()
     {
+        $signature = $_GET["signature"];
+        $msgSignature = $_GET["msg_signature"];
+        $timestamp = $_GET["timestamp"];
+        $nonce = $_GET["nonce"];
+        $token = $this->getToken();
+        $echoStr = $_GET["echostr"];
+        
+        $tmpArr = array($token, $timestamp, $nonce);
+        sort($tmpArr, SORT_STRING);
+        $tmpStr = implode($tmpArr);
+        $tmpStr = sha1($tmpStr);
         
         if ($tmpStr == $signature && $echoStr) {
             return $echoStr;
@@ -44,6 +93,219 @@ class CallableController extends \yii\web\Controller
             return $this->response();
         }
     }
+
+    /**
+     * 获取access_token
+     * 
+     * 
+     * @author 张涛<1353178739@qq.com>
+     * @since  2016年6月28日
+     */
+    public function getAccessToken($force = false)
+    {
+        $weChatMod = M('WeixinToken');
+        $appId = $this->appId;
+        $secret = $this->appSecret;
+        $old = $weChatMod->where(['appId' => $appId, 'secret' => $secret])->find();
+        if (empty($old) || $old['expires'] < time()) {
+            $curl = new Curl();
+            $url = sprintf($this->apiList['getToken'], $appId, $secret);
+            $res = $curl->get($url);
+            $res = json_decode($res, true);
+            $token = [
+                'appId' => $appId, 
+                'secret' => $secret, 
+                'token' => $res['access_token'], 
+                'expires' => time() + $res['expires_in'] - 200, 
+                'time' => time()];
+            if (empty($old)) {
+                $weChatMod->add($token);
+            } else {
+                $weChatMod->where(['id' => $old['id']])->save($token);
+            }
+            return $res['access_token'];
+        } else {
+            return $old['token'];
+        }
+    }
+
+    /**
+     * 请求微信重新获取access_token
+     */
+    public function updateAccessToken()
+    {
+        $appId = $this->appId;
+        $secret = $this->appSecret;
+        $curl = new Curl();
+        $url = sprintf($this->apiList['getToken'], $appId, $secret);
+        $res = $curl->get($url);
+        return json_decode($res, true);
+    }
+
+    /**
+     * 获取api_ticket
+     * @author 张涛<1353178739@qq.com>
+     * @since  2016年7月18日
+     */
+    public function getJsApiTicket($force = false)
+    {
+        $accessToken = $this->getAccessToken();
+        $ticketMod = M('JsApiTicket');
+        $old = $ticketMod->find();
+        $curl = new Curl();
+        if (empty($old)) {
+            $url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi';
+            $res = $curl->get(sprintf($url, $accessToken));
+            $res = json_decode($res, true);
+            $ticket = ['api_ticket' => $res['ticket'], 'expire' => time() + $res['expires_in'] - 200];
+            $ticketMod->add($ticket);
+            return $res['ticket'];
+        } else {
+            if ($old['expire'] < time()) {
+                $url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi';
+                $res = $curl->get(sprintf($url, $accessToken));
+                $res = json_decode($res, true);
+                $ticket = ['api_ticket' => $res['ticket'], 'expire' => time() + $res['expires_in'] - 200];
+                $ticketMod->where(['id' => $old['id']])->save($ticket);
+                return $res['ticket'];
+            } else {
+                return $old['api_ticket'];
+            }
+        }
+    }
+
+    /**
+     * 生成jssdk签名
+     * 
+     * 
+     * @author 张涛<1353178739@qq.com>
+     * @since  2016年7月18日
+     */
+    public function getSignPackage()
+    {
+        $ticket = $this->getJsApiTicket();
+        $timestamp = time();
+        $noncestr = rand_code(16);
+        $protocol = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $url = "$protocol$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        
+        $string = "jsapi_ticket=$ticket&noncestr=$noncestr&timestamp=$timestamp&url=$url";
+        $signature = sha1($string);
+        
+        $signPackage = array(
+            "appId" => $this->appId, 
+            "nonceStr" => $noncestr, 
+            "timestamp" => $timestamp, 
+            "url" => $url, 
+            "signature" => $signature,
+            /* "rawString" => $string */);
+        return $signPackage;
+    }
+
+    /**
+     * 创建自定义菜单
+     * 
+     * 
+     * @author 张涛<1353178739@qq.com>
+     * @since  2016年6月28日
+     */
+    public function createItem()
+    {
+        $accessToken = $this->getAccessToken();
+        $curl = new Curl();
+        $url = sprintf($this->apiList['create'], $accessToken);
+        $menuJson = '{
+                    "button": [
+                        {
+                            "name": "影视推荐", 
+                            "sub_button": [
+                                {
+                                    "type": "click", 
+                                    "name": "挖好视频", 
+                                    "key": "item001", 
+                                    "sub_button": [ ]
+                                }, 
+                                {
+                                    "type": "view", 
+                                    "name": "热剧：老九门", 
+                                    "url": "http://m.iqiyi.com/a_19rrhbeaxt.html", 
+                                    "sub_button": [ ]
+                                }, 
+                                {
+                                    "type": "view", 
+                                    "name": "独家：灭罪师", 
+                                    "url": "http://m.iqiyi.com/a_19rrhao9z5.html", 
+                                    "sub_button": [ ]
+                                }, 
+                                {
+                                    "type": "view", 
+                                    "name": "热综：上学啦", 
+                                    "url": "http://m.iqiyi.com/v_19rrm09uvo.html#vfrm=2-3-0-1", 
+                                    "sub_button": [ ]
+                                }, 
+                                {
+                                    "type": "view", 
+                                    "name": "历史消息", 
+                                    "url": "http://mp.weixin.qq.com/mp/getmasssendmsg?__biz=MzI4MzMxMzQyNw==#wechat_webview_type=1&wechat_redirect", 
+                                    "sub_button": [ ]
+                                }
+                            ]
+                        }, 
+                        {
+                                    "type": "view", 
+                                    "name": "签到赚钱", 
+                                    "url": "http://mp.vsoontech.com/PHP/Wavideo/index.php/Home/Account/sign/s/1", 
+                                    "sub_button": [ ]
+                        },  
+                        {
+                            "name": "我的", 
+                            "sub_button": [
+                                {
+                                    "type": "view", 
+                                    "name": "爱奇艺会员", 
+                                    "url": "http://mp.vsoontech.com/PHP/Wavideo/index.php/Home/Activity/iQiYi/s/1", 
+                                    "sub_button": [ ]
+                                }, 
+                                {
+                                    "type": "view", 
+                                    "name": "订单查询", 
+                                    "url": "http://mp.vsoontech.com/PHP/Wavideo/index.php/Home/Order/index/s/1", 
+                                    "sub_button": [ ]
+                                }, 
+                                {
+                                    "type": "view", 
+                                    "name": "下载TV端", 
+                                    "url": "http://mp.vsoontech.com/PHP/Wavideo/index.php/Home/Help/tvClientDownload/s/1", 
+                                    "sub_button": [ ]
+                                }
+                            ]
+                        }
+                    ]
+                }';
+        $res = $curl->post($url, $menuJson);
+        $res = json_decode($res, true);
+        if ($res['errcode'] == 0) {
+            return 'success';
+        } else {
+            return $res;
+        }
+    }
+
+    /**
+     * 获取自定义菜单
+     * 
+     * 
+     * @author 张涛<1353178739@qq.com>
+     * @since  2016年6月28日
+     */
+    public function getItem()
+    {
+        $accessToken = $this->getAccessToken();
+        $curl = new Curl();
+        $url = sprintf($this->apiList['get'], $accessToken);
+        return $curl->get($url);
+    }
+
     /**
      * 被动回复
      * 
@@ -151,6 +413,7 @@ class CallableController extends \yii\web\Controller
             return $encyMsg;
         }
     }
+
     /**
      * 回复文本
      * 
@@ -360,4 +623,31 @@ class CallableController extends \yii\web\Controller
         $resultStr = sprintf($tpl, $fromUsername, $toUsername, $time, $msgType);
         return $resultStr;
     }
+
+    /**
+     * 上传临时素材
+     * @param unknown $path
+     * @param string $type
+     * @return void|mixed
+     * @author 张涛<1353178739@qq.com>
+     * @since  2016年8月30日
+     */
+    public function uploadMedia($path, $type = 'image')
+    {
+        $accessToken = $this->getAccessToken();
+        $url = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token={$accessToken}&type={$type}";
+        if (file_exists($path)) {
+            if (class_exists('CURLFile')) {
+                $filedata = array('media' => new \CURLFile($path));
+            } else {
+                $filedata = array('media' => '@' . $path);
+            }
+            $res = http_post($url, $filedata);
+            $res = json_decode($res, true);
+            return $res;
+        } else {
+            return;
+        }
+    }
+
 }

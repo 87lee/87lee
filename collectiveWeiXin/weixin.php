@@ -11,7 +11,6 @@ class weixin extends \yii\base\Module
      * @inheritdoc
      */
     public $controllerNamespace = 'app\collectiveWeiXin\controllers';
-
     /**
      * 
      * @inheritdoc
@@ -25,16 +24,12 @@ class weixin extends \yii\base\Module
         \Yii::configure($this,require( __DIR__ . DIRECTORY_SEPARATOR . 'config'. DIRECTORY_SEPARATOR . 'collectiveWeiXin.php'));
         //操作前触发
         \Yii::$app->on(\yii\base\Application::EVENT_BEFORE_ACTION, function ($event) {
-            
             $params = $this->params;
-
             $weixinAccessTokenFile = __DIR__ . DIRECTORY_SEPARATOR .'weixinAccessToken.conf';
-                
             if (file_exists($weixinAccessTokenFile)) {
                 $accessTokenStr = file_get_contents($weixinAccessTokenFile);
                 $accessTokenArr = \yii\helpers\Json::decode($accessTokenStr);
             }
-            // $res = $this->getAccessToken();die;
             if (!empty($accessTokenArr)) {
                 if ( $accessTokenArr['time'] + $accessTokenArr['expires_in'] - time() - 900 <= 0) {
                     $res = $this->getAccessToken();
@@ -45,10 +40,8 @@ class weixin extends \yii\base\Module
             }else{
                 $res = $this->getAccessToken();
                 $res['time'] = time();
-
             }
             file_put_contents($weixinAccessTokenFile, \yii\helpers\Json::encode($res));
-            
             \Yii::$app->params['collectiveWeixinConfig']['access_token'] = $res['access_token'];
         });
     }
