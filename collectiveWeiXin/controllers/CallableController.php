@@ -4,65 +4,62 @@ namespace app\collectiveWeiXin\controllers;
 use Yii;
 class CallableController extends \yii\web\Controller
 {
+
+	private $token;
+
+    private $appId;
+
+    private $appSecret;
+
+    private $encodingAesKey;
+
+    private $signature;
+
+    private $msgSignature;
+
+    private $timestamp;
+
+    private $nonce;
+
 	public function actionIndex()
 	{
 
+
 		$request = Yii::$app->request;
 		$get = $request->get();
-		//验证回调域名
-		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr']) ) {
+		// 第三方发送消息给公众平台
+		$this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) &&!empty($get['echostr'])) {
+			//验证回调域名
 			$tmpArr = array(Yii::$app->params['collectiveWeixinConfig']['token'], $get['timestamp'], $get['nonce']);
 			sort($tmpArr, SORT_STRING);
 			$tmpStr = implode( $tmpArr );
 			$tmpStr = sha1( $tmpStr );
 			if( $tmpStr == $get['signature'] ){
-				echo $get['echostr'];
-				die;
+				die($get['echostr']);
 			}else{
 				return false;
 			}
+		}else{
+			$this->msgSignature = '';
+            $this->signature = isset($get["signature"])?$get["signature"]:'';
+            $this->nonce = $get["nonce"];
+            $this->timestamp = $get["timestamp"];
+            return $this->response();
 		}
 	}
-
-	/**
-     * 签名验证
-     *
-     *
-     * @author 张涛<1353178739@qq.com>
-     * @since  2016年6月28日
-     */
-    public function access()
-    {
-        
-        if ($tmpStr == $signature && $echoStr) {
-            return $echoStr;
-        } else {
-            $this->msgSignature = $msgSignature;
-            $this->signature = $signature;
-            $this->nonce = $nonce;
-            $this->timestamp = $timestamp;
-            return $this->response();
-        }
-    }
     /**
      * 被动回复
-     * 
-     * 
      * @return string
-     * @author 张涛<1353178739@qq.com>
      * @since  2016年6月28日
      */
     public function response()
     {
-        $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+    	$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
         $postStr = $this->decrypt($postStr);
         if (! empty($postStr)) {
             libxml_disable_entity_loader(true);
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-            
-             $errorFile = LOG_PATH . 'Home/respon' . date('Ymd', time()) . '.log';
-             \Think\Log::write(var_export($postObj,true), '', '', $errorFile);
-            
             $msgType = $postObj->MsgType;
             switch ($msgType) {
                 case 'text':
@@ -295,7 +292,9 @@ class CallableController extends \yii\web\Controller
      */
     public function decrypt($xml)
     {
-        include_once "Weichat/wxBizMsgCrypt.php";
+    	$filePath = '@app/'./*DIRECTORY_SEPARATOR .*/ 'vendor/'/*.DIRECTORY_SEPARATOR */.'weichat/'/*.DIRECTORY_SEPARATOR*/.'wxBizMsgCrypt.php';
+		Yii::$classMap['WXBizMsgCrypt'] = $filePath;
+        // include_once "Weichat/wxBizMsgCrypt.php";
         $encodingAesKey = $this->encodingAesKey;
         $token = $this->token;
         $timeStamp = $this->timestamp;
@@ -322,7 +321,10 @@ class CallableController extends \yii\web\Controller
      */
     public function encrypt($xml)
     {
-        include_once "Weichat/wxBizMsgCrypt.php";
+        // include_once "Weichat/wxBizMsgCrypt.php";
+
+        $filePath = '@app/'./*DIRECTORY_SEPARATOR .*/ 'vendor/'/*.DIRECTORY_SEPARATOR */.'weichat/'/*.DIRECTORY_SEPARATOR*/.'wxBizMsgCrypt.php';
+		Yii::$classMap['WXBizMsgCrypt'] = $filePath;
         $encodingAesKey = $this->encodingAesKey;
         $token = $this->token;
         $timeStamp = $this->timestamp;
