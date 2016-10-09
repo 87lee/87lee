@@ -4,31 +4,17 @@ namespace app\collectiveWeiXin\controllers;
 use Yii;
 class CallableController extends \yii\web\Controller
 {
-
-	private $token;
-
-    private $appId;
-
-    private $appSecret;
-
-    private $encodingAesKey;
-
     private $signature;
-
     private $msgSignature;
-
     private $timestamp;
-
     private $nonce;
-
+    private $baseText = '信息不存在';
 	public function actionIndex()
 	{
-
-
 		$request = Yii::$app->request;
 		$get = $request->get();
 		// 第三方发送消息给公众平台
-		$this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
+		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) &&!empty($get['echostr'])) {
 			//验证回调域名
 			$tmpArr = array(Yii::$app->params['collectiveWeixinConfig']['token'], $get['timestamp'], $get['nonce']);
@@ -41,7 +27,7 @@ class CallableController extends \yii\web\Controller
 				return false;
 			}
 		}else{
-			$this->msgSignature = '';
+			$this->msgSignature = isset($get["msgSignature"])?$get["msgSignature"]:'';
             $this->signature = isset($get["signature"])?$get["signature"]:'';
             $this->nonce = $get["nonce"];
             $this->timestamp = $get["timestamp"];
@@ -57,6 +43,15 @@ class CallableController extends \yii\web\Controller
     {
     	$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
         $postStr = $this->decrypt($postStr);
+        /*$postStr = "<xml><ToUserName><![CDATA[oia2Tj我是中文jewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
+         $postStr = '<xml>
+         <ToUserName><![CDATA[toUser]]></ToUserName>
+         <FromUserName><![CDATA[fromUser]]></FromUserName>
+         <CreateTime>1348831860</CreateTime>
+         <MsgType><![CDATA[text]]></MsgType>
+         <Content><![CDATA[this is a test]]></Content>
+         <MsgId>1234567890123456</MsgId>
+         </xml>';*/
         if (! empty($postStr)) {
             libxml_disable_entity_loader(true);
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -64,44 +59,10 @@ class CallableController extends \yii\web\Controller
             switch ($msgType) {
                 case 'text':
                     $text = $postObj->Content;
-                    $reply = auto_reply($text);
-                    if (! empty($reply)) {
-                        $msg = $this->responseText($postObj, $reply);
-                    } else {
-                        //视频检索,需要设定匹配规则
-                        $video = D('Program', 'Vod')->alias('p')
-                            ->join('vod_program_source ps ON p.id = ps.program_id')
-                            ->where(['p.name' => trim($text)])
-                            ->field('p.intro, p.id, p. name,p.down_pic')
-                            ->find();
-                        if (! empty($video)) {
-                            $pic = array(
-                                array(
-                                    'title' => $video['name'], 
-                                    'desc' => mb_substr($video['intro'], 0, 30, 'utf-8') . '...', 
-                                    'picUrl' => $video['down_pic'], 
-                                    'url' => U('Video/index', array('videoId' => $video['id']), '', $_SERVER['SERVER_NAME'])));
-                            return $this->responseImage($postObj, $pic);
-                        } else {
-                            //推送给企业客服
-                            $fromUsername = $postObj->FromUserName;
-                            $userInfo = R('Weixin/getBase', ['openId' => $fromUsername]);
-                            $kfList = R('Service/getKfList', ['type' => 'external']);
-                            $kfInfo = D('KefuAccess', 'Logic')->access(trim($fromUsername), 
-                                ['type' => 'text', 'content' => trim($text)]);
-                            if ($kfInfo == false) {
-                                //没有客服接入
-                                $linkIn = U('Service/linkIn', ['openid' => $fromUsername], '', $_SERVER['SERVER_NAME']);
-                                $typeContent = "【{$userInfo['nickname']}】咨询：" . $text . "   <a href='" . $linkIn . "'>点击接入</a>";
-                            } else {
-                                //有接入客服
-                                $typeContent = "【{$userInfo['nickname']}】咨询【{$kfInfo['name']}】：" . $text;
-                                R('Service/sendToKf', 
-                                    ['from' => $fromUsername, 'to' => $kfInfo['userid'], 'typeContent' => $text, 'type' => 'text']);
-                            }
-                            R('Service/sendMsg', ['userid' => C('PUSH_USERID_LIST'), 'typeContent' => $typeContent, 'type' => 'text']);
-                        }
-                    }
+                    $text = 4;
+
+                    $customer = \app\collectiveWeiXin\models\OfoBicycle::find()->where(['number' => (int)$text])->one();
+                    $msg = $this->responseText($postObj, $value->pwd);
                     break;
                 case 'image':
                     $pic = $postObj->PicUrl;
@@ -295,12 +256,13 @@ class CallableController extends \yii\web\Controller
     	$filePath = '@app/'./*DIRECTORY_SEPARATOR .*/ 'vendor/'/*.DIRECTORY_SEPARATOR */.'weichat/'/*.DIRECTORY_SEPARATOR*/.'wxBizMsgCrypt.php';
 		Yii::$classMap['WXBizMsgCrypt'] = $filePath;
         // include_once "Weichat/wxBizMsgCrypt.php";
-        $encodingAesKey = $this->encodingAesKey;
-        $token = $this->token;
+        $encodingAesKey = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?Yii::$app->params['collectiveWeixinConfig']['encodingAesKey']:'';
+        $token = isset(Yii::$app->params['collectiveWeixinConfig']['token'])?Yii::$app->params['collectiveWeixinConfig']['token']:'';
+        $appId = isset(Yii::$app->params['collectiveWeixinConfig']['appId'])?Yii::$app->params['collectiveWeixinConfig']['appId']:'';
+
+        $msgSignature = $this->msgSignature;
         $timeStamp = $this->timestamp;
         $nonce = $this->nonce;
-        $appId = $this->appId;
-        $msgSignature = $this->msgSignature;
 
         $pc = new \WXBizMsgCrypt($token, $encodingAesKey, $appId);
         $msg = '';
@@ -325,11 +287,12 @@ class CallableController extends \yii\web\Controller
 
         $filePath = '@app/'./*DIRECTORY_SEPARATOR .*/ 'vendor/'/*.DIRECTORY_SEPARATOR */.'weichat/'/*.DIRECTORY_SEPARATOR*/.'wxBizMsgCrypt.php';
 		Yii::$classMap['WXBizMsgCrypt'] = $filePath;
-        $encodingAesKey = $this->encodingAesKey;
-        $token = $this->token;
         $timeStamp = $this->timestamp;
         $nonce = $this->nonce;
-        $appId = $this->appId;
+        $encodingAesKey = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?Yii::$app->params['collectiveWeixinConfig']['encodingAesKey']:'';
+        $token = isset(Yii::$app->params['collectiveWeixinConfig']['token'])?Yii::$app->params['collectiveWeixinConfig']['token']:'';
+        $appId = isset(Yii::$app->params['collectiveWeixinConfig']['appId'])?Yii::$app->params['collectiveWeixinConfig']['appId']:'';
+
         $pc = new \WXBizMsgCrypt($token, $encodingAesKey, $appId);
         $encryptMsg = '';
         $errCode = $pc->encryptMsg($xml, $timeStamp, $nonce, $encryptMsg);

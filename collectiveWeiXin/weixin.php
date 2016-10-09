@@ -51,7 +51,7 @@ class weixin extends \yii\base\Module
         $params = $this->params;
         $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' . $params['collectiveWeixinConfig']['appId'] . '&secret='.$params['collectiveWeixinConfig']['appsecret'];
         $str = \app\helpers\Url::getUrl($url);
-        if ($str === false ) {
+        if ($str === false ){
             die('远程获取access_token失败');
         }else{
             $res = \yii\helpers\Json::decode($str);
