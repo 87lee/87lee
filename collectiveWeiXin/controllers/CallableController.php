@@ -42,7 +42,7 @@ class CallableController extends \yii\web\Controller
     public function response()
     {
     	$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
-        $postStr = $this->decrypt($postStr);
+        $postStr = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?$this->decrypt($postStr):$postStr;
         /*$postStr = "<xml><ToUserName><![CDATA[oia2Tj我是中文jewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
          $postStr = '<xml>
          <ToUserName><![CDATA[toUser]]></ToUserName>
@@ -105,7 +105,7 @@ class CallableController extends \yii\web\Controller
             if(empty($msg)){
                 $msg=$this->respCustom($postObj);
             }
-            $encyMsg = $this->encrypt($msg);
+            $encyMsg = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?$this->encrypt($msg):$msg;
             return $encyMsg;
         }
     }
