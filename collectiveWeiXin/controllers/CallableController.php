@@ -15,14 +15,15 @@ class CallableController extends \yii\web\Controller
 		$get = $request->get();
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
-		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) &&!empty($get['echostr'])) {
+		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
 			//验证回调域名
 			$tmpArr = array(Yii::$app->params['collectiveWeixinConfig']['token'], $get['timestamp'], $get['nonce']);
 			sort($tmpArr, SORT_STRING);
 			$tmpStr = implode( $tmpArr );
 			$tmpStr = sha1( $tmpStr );
 			if( $tmpStr == $get['signature'] ){
-				die($get['echostr']);
+				echo $get['echostr'];
+				die();
 			}else{
 				return false;
 			}
@@ -60,7 +61,6 @@ class CallableController extends \yii\web\Controller
                 case 'text':
                     $text = $postObj->Content;
                     $text = 4;
-
                     $customer = \app\collectiveWeiXin\models\OfoBicycle::find()->where(['number' => (int)$text])->one();
                     $msg = $this->responseText($postObj, $value->pwd);
                     break;
