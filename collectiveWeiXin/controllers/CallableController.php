@@ -13,9 +13,11 @@ class CallableController extends \yii\web\Controller
 	{
 		$request = Yii::$app->request;
 		$get = $request->get();
+    Yii::beginProfile('weixin');
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
+      Yii::trace('验证回调域名');
 			//验证回调域名
 			$tmpArr = array(Yii::$app->params['collectiveWeixinConfig']['token'], $get['timestamp'], $get['nonce']);
 			sort($tmpArr, SORT_STRING);
@@ -28,12 +30,14 @@ class CallableController extends \yii\web\Controller
 				return false;
 			}
 		}else{
+      Yii::trace('回调信息');
 			$this->msgSignature = isset($get["msgSignature"])?$get["msgSignature"]:'';
             $this->signature = isset($get["signature"])?$get["signature"]:'';
             $this->nonce = $get["nonce"];
             $this->timestamp = $get["timestamp"];
             return $this->response();
 		}
+    Yii::endProfile('weixin');
 	}
     /**
      * 被动回复
