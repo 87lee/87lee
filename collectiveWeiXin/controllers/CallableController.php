@@ -14,6 +14,7 @@ class CallableController extends \yii\web\Controller
 		$request = Yii::$app->request;
 		$get = $request->get();
     Yii::beginProfile('微信LOG');
+    
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
@@ -34,10 +35,10 @@ class CallableController extends \yii\web\Controller
 		}else{
       Yii::trace('回调信息');
 			$this->msgSignature = isset($get["msgSignature"])?$get["msgSignature"]:'';
-            $this->signature = isset($get["signature"])?$get["signature"]:'';
-            $this->nonce = $get["nonce"];
-            $this->timestamp = $get["timestamp"];
-            return $this->response();
+      $this->signature = isset($get["signature"])?$get["signature"]:'';
+      $this->nonce = $get["nonce"];
+      $this->timestamp = $get["timestamp"];
+      return $this->response();
 		}
     Yii::endProfile('微信LOG');
 	}
@@ -48,8 +49,9 @@ class CallableController extends \yii\web\Controller
      */
     public function response()
     {
+      Yii::trace('被动回复');
     	$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
-        $postStr = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?$this->decrypt($postStr):$postStr;
+      $postStr = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?$this->decrypt($postStr):$postStr;
         /*$postStr = "<xml><ToUserName><![CDATA[oia2Tj我是中文jewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
          $postStr = '<xml>
          <ToUserName><![CDATA[toUser]]></ToUserName>
