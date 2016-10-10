@@ -42,7 +42,9 @@ class weixin extends \yii\base\Module
                 $res['time'] = time();
             }
             file_put_contents($weixinAccessTokenFile, \yii\helpers\Json::encode($res));
-            \Yii::$app->params['collectiveWeixinConfig']['access_token'] = $res['access_token'];
+
+            \Yii::$app->params['collectiveWeixinConfig'] = array_merge($this->params['collectiveWeixinConfig'],['access_token'=>$res['access_token']]);
+            
         });
     }
     
