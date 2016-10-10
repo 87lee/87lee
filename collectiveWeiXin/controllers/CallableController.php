@@ -13,7 +13,7 @@ class CallableController extends \yii\web\Controller
 	{
 		$request = Yii::$app->request;
 		$get = $request->get();
-    Yii::beginProfile('weixin');
+    Yii::beginProfile('微信LOG');
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
@@ -24,9 +24,11 @@ class CallableController extends \yii\web\Controller
 			$tmpStr = implode( $tmpArr );
 			$tmpStr = sha1( $tmpStr );
 			if( $tmpStr == $get['signature'] ){
+        Yii::trace('验证回调域名成功');
 				echo $get['echostr'];
 				die();
 			}else{
+        Yii::trace('验证回调域名失败');
 				return false;
 			}
 		}else{
@@ -37,7 +39,7 @@ class CallableController extends \yii\web\Controller
             $this->timestamp = $get["timestamp"];
             return $this->response();
 		}
-    Yii::endProfile('weixin');
+    Yii::endProfile('微信LOG');
 	}
     /**
      * 被动回复
