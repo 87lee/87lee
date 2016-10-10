@@ -14,7 +14,8 @@ class CallableController extends \yii\web\Controller
 		$request = Yii::$app->request;
 		$get = $request->get();
     Yii::beginProfile('微信LOG');
-    
+    echo '1';
+    die;
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
