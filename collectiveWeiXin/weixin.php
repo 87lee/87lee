@@ -36,7 +36,7 @@ class weixin extends \yii\base\Module
     
     public function init()
     {
-        Yii::trace('微信初始化');
+        \Yii::trace('微信初始化');
         //继承父级初始化
         parent::init();
         //加入模块配置
@@ -49,7 +49,7 @@ class weixin extends \yii\base\Module
                 $accessTokenStr = file_get_contents($weixinAccessTokenFile);
                 $accessTokenArr = \yii\helpers\Json::decode($accessTokenStr);
             }
-            Yii::trace('验证微信access_token');
+            \Yii::trace('验证微信access_token');
             if (!empty($accessTokenArr)) {
                 if ( $accessTokenArr['time'] + $accessTokenArr['expires_in'] - time() - 900 <= 0) {
                     $res = $this->getAccessToken();
