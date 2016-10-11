@@ -18,10 +18,12 @@ class weixin extends \yii\base\Module
         $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' . $params['collectiveWeixinConfig']['appId'] . '&secret='.$params['collectiveWeixinConfig']['appsecret'];
         $str = \app\helpers\Url::getUrl($url);
         if ($str === false ){
+            \Yii::trace('请求获取微信access_token失败');
             die('远程获取access_token失败');
         }else{
             $res = \yii\helpers\Json::decode($str);
             if (isset($res['access_token'])) {
+                \Yii::trace('请求获取微信access_token成功');
                 return $res;
             }else{
                 die('微信端请求:'.$res['errcode'] .' 信息：'.$res['errmsg']);
@@ -62,7 +64,6 @@ class weixin extends \yii\base\Module
                 $res['time'] = time();
             }
             file_put_contents($weixinAccessTokenFile, \yii\helpers\Json::encode($res));
-
             \Yii::$app->params['collectiveWeixinConfig'] = array_merge($this->params['collectiveWeixinConfig'],['access_token'=>$res['access_token']]);
 
         });
