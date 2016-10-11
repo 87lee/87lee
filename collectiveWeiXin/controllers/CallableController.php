@@ -11,9 +11,10 @@ class CallableController extends \yii\web\Controller
     private $baseText = '信息不存在';
 	public function actionIndex()
 	{
+		Yii::beginProfile('微信LOG');
+		Yii::trace('获取请求数据');
 		$request = Yii::$app->request;
 		$get = $request->get();
-    	Yii::beginProfile('微信LOG');
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
