@@ -9,12 +9,14 @@ class CallableController extends \yii\web\Controller
     private $timestamp;
     private $nonce;
     private $baseText = '信息不存在';
+    public $enableCsrfValidation = false; //关闭Csrf
 	public function actionIndex()
 	{
 		Yii::beginProfile('微信LOG');
 		Yii::trace('获取请求数据');
 		$request = Yii::$app->request;
 		$get = $request->get();
+		// $post = $request->post();
 		// 第三方发送消息给公众平台
 		// $this->encodingAesKey = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
 		if (!empty($get['signature']) && !empty($get['timestamp']) && !empty($get['nonce']) && !empty($get['echostr'])) {
@@ -49,7 +51,9 @@ class CallableController extends \yii\web\Controller
     public function response()
     {
       	Yii::trace('被动回复');
-    	$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+        // die();
+        $postStr = file_get_contents('php://input');
+    	// $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
       	$postStr = isset(Yii::$app->params['collectiveWeixinConfig']['encodingAesKey'])?$this->decrypt($postStr):$postStr;
         /*$postStr = "<xml><ToUserName><![CDATA[oia2Tj我是中文jewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
          $postStr = '<xml>
@@ -69,7 +73,7 @@ class CallableController extends \yii\web\Controller
                     $text = $postObj->Content;
                     $text = 4;
                     $customer = \app\collectiveWeiXin\models\OfoBicycle::find()->where(['number' => (int)$text])->one();
-                    $msg = $this->responseText($postObj, $value->pwd);
+                    $msg = $this->responseText($postObj, $customer->pwd);
                     break;
                 case 'image':
                     $pic = $postObj->PicUrl;
