@@ -71,12 +71,8 @@ class CallableController extends \yii\web\Controller
             switch ($msgType) {
                 case 'text':
                     $text = $postObj->Content;
-                    $text = 4;
                     $customer = \app\collectiveWeiXin\models\OfoBicycle::find()->where(['number' => (int)$text])->one();
-                    if (empty($customer->pwd)) {
-                    	$customer->pwd = '';
-                    }
-                    $msg = $this->responseText($postObj, $customer->pwd);
+                    $msg = $this->responseText($postObj, empty($customer->pwd)?'':$customer->pwd);
                     break;
                 case 'image':
                     $pic = $postObj->PicUrl;
