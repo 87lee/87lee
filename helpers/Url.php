@@ -67,11 +67,10 @@ class Url
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $config['CURLOPT_SSL_VERIFYPEER']);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $config['CURLOPT_SSL_VERIFYHOST']);
         curl_setopt($ch, CURLOPT_URL, $url);
-
     	return $ch;
     }
 
-    public function postUrl($url,$file,$config = [])
+    public static function postUrl($url,$file,$config = [])
     {
         $header = array(
          'Content-Type: application/json; charset=utf-8',
@@ -84,7 +83,6 @@ class Url
         curl_setopt($ch, CURLOPT_POSTFIELDS, $file);
         //设置公共参数
         $ch = self::setCommonCurlSetopt($ch,$url,$config);
-
         $content = curl_exec($ch);
         $status = curl_getinfo($ch);
         curl_close($ch);
@@ -94,7 +92,6 @@ class Url
 
         }else
         {
-
             return false;
         }
     }
