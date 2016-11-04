@@ -19,6 +19,7 @@ class weixin extends \yii\base\Module
         $str = \app\helpers\Url::getUrl($url);
         if ($str === false ){
             \Yii::trace('请求获取微信access_token失败');
+            header('Content-type: text/html; charset=UTF-8');
             die('远程获取access_token失败');
         }else{
             $res = \yii\helpers\Json::decode($str);
@@ -26,6 +27,7 @@ class weixin extends \yii\base\Module
                 \Yii::trace('请求获取微信access_token成功');
                 return $res;
             }else{
+                header('Content-type:Application/html; charset=UTF-8');
                 die('微信端请求:'.$res['errcode'] .' 信息：'.$res['errmsg']);
             }
         }
