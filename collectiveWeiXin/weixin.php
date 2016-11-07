@@ -17,17 +17,15 @@ class weixin extends \yii\base\Module
         \Yii::trace('请求获取微信access_token');
         $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' . $params['collectiveWeixinConfig']['appId'] . '&secret='.$params['collectiveWeixinConfig']['appsecret'];
         $str = \app\helpers\Url::getUrl($url);
-        if ($str === false ){
+        if (!empty($str['result'])&& $str['result'] == 'fail' ){
             \Yii::trace('请求获取微信access_token失败');
-            header('Content-type: text/html; charset=UTF-8');
-            die('远程获取access_token失败');
+            die('远程获取access_token失败:'.$str['http_code']);
         }else{
             $res = \yii\helpers\Json::decode($str);
             if (isset($res['access_token'])) {
                 \Yii::trace('请求获取微信access_token成功');
                 return $res;
             }else{
-                header('Content-type:Application/html; charset=UTF-8');
                 die('微信端请求:'.$res['errcode'] .' 信息：'.$res['errmsg']);
             }
         }

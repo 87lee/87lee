@@ -9,8 +9,8 @@ class Url
 {
 	protected static $config = [
 		'CURLOPT_HTTP_VERSION'=>CURL_HTTP_VERSION_1_0,
-		'CURLOPT_CONNECTTIMEOUT'=>0,
-		'CURLOPT_TIMEOUT'=>0,
+		'CURLOPT_CONNECTTIMEOUT'=>30,
+		'CURLOPT_TIMEOUT'=>30,
 		'CURLOPT_RETURNTRANSFER'=>TRUE,
 		'CURLOPT_ENCODING'=>'',
 		'CURLOPT_SSL_VERIFYPEER'=>FALSE,
@@ -22,9 +22,7 @@ class Url
         //CURL初始化
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-
         $ch = self::setCommonCurlSetopt($ch,$url,$config);
-
         $content = curl_exec($ch);
         $status = curl_getinfo($ch);
         curl_close($ch);
@@ -46,19 +44,16 @@ class Url
         $content = curl_exec($ch);
         $status = curl_getinfo($ch);
         curl_close($ch);
-        if(intval($status["http_code"]) == 200)
-        {
+        if(intval($status["http_code"]) == 200){
             return $content;
-        }else
-        {
-            return false;
+        }else{
+            return ['result'=>"fail",'http_code'=>$status["http_code"]];
         }
     }
 
     protected static function setCommonCurlSetopt($ch,$url,$config=[])
     {
     	$config = array_merge(self::$config,$config);
-
     	curl_setopt($ch, CURLOPT_HTTP_VERSION, $config['CURLOPT_HTTP_VERSION']);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $config['CURLOPT_HTTP_VERSION']);
         curl_setopt($ch, CURLOPT_TIMEOUT,$config['CURLOPT_TIMEOUT']);
