@@ -7,7 +7,10 @@ class OfoBicycleController extends \yii\web\Controller
 	public $layout = false;
     public function actionIndex()
     {
-        return $this->render('index');
+        /*$a = \Yii::getAlias('@web');
+        var_dump($a);
+        die;*/
+        return $this->render('index',['title'=>'小黄车']);
     }
     public function actionAddNumber()
     {

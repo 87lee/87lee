@@ -4,9 +4,9 @@
 /* @var $content string */
 
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
+// use yii\bootstrap\Nav;
+// use yii\bootstrap\NavBar;
+// use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 AppAsset::register($this);
 $this->title = $title;
@@ -22,7 +22,7 @@ $this->title = $title;
     <?php $this->head() ?>
 </head>
 <body>
-<?php $this->beginBody() ?>
+<?php $this->beginBody() ;?>
 <div style="margin:0px auto;width:215px;">
 	<?php echo Html::beginForm(['ofo-bicycle/add'/*, 'id' => $id*/], 'post', ['enctype' => 'multipart/form-data']) ?>
 	号码：
