@@ -43,7 +43,6 @@ jQuery(document).ready(function($) {
 				type: 'post',
 				data:data,
 				success: function(data,status,xhr){
-					console.log(data);
 					if (data.result == 'ok') {
 						createNumber(data);
 						// return location.href = "<?php echo U('home/index/info') ;?>";
