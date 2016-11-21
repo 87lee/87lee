@@ -1,123 +1,59 @@
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-/*//////////////////// Variables Start                                                                                    */
-var $ = jQuery.noConflict(); 
-var formSubmitted = 'false';
-/*//////////////////// Variables End                                                                                      */
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-
-
-
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-/*//////////////////// Document Ready Function Starts                                                                     */
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 jQuery(document).ready(function($) {
-		   
+	function createNumber(data) {
+		$('.numberList').html();
+		var $html = '<tr  style="font-weight:bold"><td>#</td><td>number</td><td>password</td></tr>';
+		var len = data.numbers.length;
+		for (var i = 0; i < len; i++) {
+			$html += '<tr><td>'+data.numbers[i].id+'</td><td>'+data.numbers[i].number+'</td><td>'+data.numbers[i].pwd+'</td></tr>';
+		}
+		$('#numberList').html($html);
+	}
 	
-	
-	// fields focus function starts
-	$('input[type="text"], input[type="password"], textarea').focus(function(){
-	    
-		if($(this).val() == $(this).attr('data-dummy')){
-		    
-			$(this).val('');
-				
-		};	
-		
-	});
-	// fields focus function ends
-	
-	
-	
-	// fields blur function starts
-	$('input, textarea').blur(function(){
-	    
-		if($(this).val() == ''){
-		    
-			$(this).val($(this).attr('data-dummy'));
-				
-		};	
-		
-	});
-	// fields blur function ends
-	
-	
-	
-	// submit form data starts	   
-    function submitData(currentForm, formType){
-        
-		formSubmitted = 'true';
-		
-		var formInput = $('#' + currentForm).serialize();
-		
-		$.post($('#' + currentForm).attr('action'),formInput, function(data){
-			
-			$('#' + currentForm).hide();
-			$('#formSuccessMessageWrapper').fadeIn(500);
-			
-		});
+	var order = {
+		init:function(){
+			this.numberList();	
+		},
+		numberList:function(){
+			$('#contactSubmitButton').on('click',function(){
+				var data = {};
+				data.number   = $('#exampleInputEmail').val();
+				data.password = $('#exampleInputPassword').val();
+				data._csrf = $('#_csrf').val();
+				var url = "/collectiveWeiXin/ofo-bicycle/add";
+				order.postAjax(url,data);
+			})
+		},
 
-	};
-	// submit form data function starts
-	
-	
-	
-	// validate form function starts
-	function validateForm(currentForm, formType){
-		
-		// hide any error messages starts
-	    $('.formValidationError').hide();
-		$('.fieldHasError').removeClass('fieldHasError');
-	    // hide any error messages ends
-		
-		$('#' + currentForm + ' .requiredField').each(function(i){
-		   	 
-			if($(this).val() == '' || $(this).val() == $(this).attr('data-dummy')){
-				
-				$(this).val($(this).attr('data-dummy'));	
-				$(this).focus();
-				$(this).addClass('fieldHasError');
-				$('#' + $(this).attr('id') + 'Error').fadeIn(300);
-				return false;
-					   
-			};
-			
-			if($(this).hasClass('requiredEmailField')){
-				  
-				var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-				var tempField = '#' + $(this).attr('id');
-				
-				if(!emailReg.test($(tempField).val())) {
-					$(tempField).focus();
-					$(tempField).addClass('fieldHasError');
-					$(tempField + 'Error2').fadeIn(300);
-					return false;
-				};
-			
-			};
-			
-			if(formSubmitted == 'false' && i == $('#' + currentForm + ' .requiredField').length - 1){
-			 	submitData(currentForm, formType);
-			};
-			  
-   		});
-		
-	};
-	// validate form function ends
-	
-	
-	
-	// contact button function starts
-	$('#contactSubmitButton').click(function() {
-	
-		validateForm($(this).attr('data-formId'));	
-	    return false;
-		
-	});
-	// contact button function ends
-	
-	
-	
+		/*getAjax:function(url,fn){
+			$.ajax({
+				url:url,
+				dataType: 'json',
+				type: 'get',
+				success: function(data,status,xhr){
+					fn(data,status,xhr);
+				}
+			})
+		},*/
+
+		postAjax:function(url,data){
+			$.ajax({
+				url:url,
+				dataType: 'json',
+				async : false,
+				type: 'post',
+				data:data,
+				success: function(data,status,xhr){
+					console.log(data);
+					if (data.result == 'ok') {
+						createNumber(data);
+						// return location.href = "<?php echo U('home/index/info') ;?>";
+					}
+				}
+			});
+		},
+	}
+	window.onload = function() {
+		order.init();
+		$('#contactSubmitButton').trigger('click');
+	}
 });
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
-/*//////////////////// Document Ready Function Ends                                                                       */
-/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/

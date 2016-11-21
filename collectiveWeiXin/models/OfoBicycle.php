@@ -46,21 +46,47 @@ class OfoBicycle extends \yii\db\ActiveRecord
             'pwd' => 'Pwd',
         ];
     }
-    public function addOptions($post)
+    public function fields()
     {
         
-        $this->number = $post['number'];
-        $this->pwd = $post['pwd'];
-        $one = $this->find()->where(['number'=>$post['number']])->one();
-        if (!empty($one->id)) {
-            $one = $this->findOne($one->id);
-            $one->number = $post['number'];
-            $one->pwd = $post['pwd'];
-            return $one->save();
-        }else{
-            return $this->save();
+        return [
+            'id','number','pwd','createTime'=>'create_time','updateTime'=>'update_time'
+        ];
+    }
+    public function addOptions($post)
+    {
+        /*ALTER TABLE `ofo_bicycle`
+        ADD COLUMN `create_time`  timestamp NOT NULL AFTER `pwd`,
+        ADD COLUMN `update_time`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `create_time`;*/
+        
+        if (!empty($post['pwd']) && $post['number']) {
+            $this->number = $post['number'];
+            $this->pwd = $post['pwd'];
+            $time = \Yii::$app->formatter->asDatetime(time());
+            $this->create_time = $time;
+            $this->update_time = $time;
+            $one = $this->find()->where(['number'=>$post['number']])->one();
+            if (!empty($one->id)) {
+                $one = $this->findOne($one->id);
+                $one->number = $post['number'];
+                $one->pwd = $post['pwd'];
+                $one->save();
+            }else{
+                $this->save();
+            }
         }
+        $num = 10;
+        $data = ['result'=>'ok','numbers'=>[]];
+        if (!empty($post['number'])) {
+            $res = $this->find()->where(['number'=>$post['number']])->one();
+            if (!empty($res)) {
+                $data['numbers'][] = $res;
+                $num = 9;
+            }
+        }
+
+        $data['numbers'] = array_merge($data['numbers'],$this->find()->where(['!=','number',$post['number']])->orderBy('update_time desc')->limit($num)->all());
         
-        
+        return $data;
     }
 }

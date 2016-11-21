@@ -23,7 +23,7 @@ $this->title = $title;
   
   <!-- main menu wrapper starts -->
   <ul class="mainMenuWrapper">
-    <li><a href="index.html">Landing Page</a></li>
+    <!-- <li><a href="index.html">Landing Page</a></li>
     <li><a href="home.html">Home</a></li>
     <li><a href="typography.html">About</a> </li>
     <li><a href="faq.html">FAQ Page</a></li>
@@ -35,7 +35,7 @@ $this->title = $title;
     <li><a href="singleProject.html">Single Portfolio Project</a></li>
     <li><a href="blog.html">Blog</a> </li>
     <li><a href="singlePost.html">Single Post</a></li>
-    <li class="currentPage"><a href="contact.html">Contact</a></li>
+    <li class="currentPage"><a href="contact.html">Contact</a></li> -->
   </ul>
   <!-- main menu wrapper ends --> 
   
@@ -61,7 +61,23 @@ $this->title = $title;
     
     <!-- contact form wrapper starts -->
     <div class="contactFormWrapper">
-      
+      <div class="form-group">
+        <label for="exampleInputEmail">Number</label>
+        <input type="email" class="form-control" id="exampleInputEmail" placeholder="Enter number">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword">Password</label>
+        <input type="email" class="form-control" id="exampleInputPassword" placeholder="Password">
+      </div> 
+      <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">  
+      <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+      <div class="formSubmitButtonErrorsWrapper"> 
+        <input type="submit" class="buttonWrapper contactSubmitButton" id="contactSubmitButton" value="Submit" />
+      </div>
+      <div style="height:10px"></div>
+      <table class="table " id="numberList">
+        
+      </table>
     </div>
     <!-- contact form wrapper ends --> 
     
