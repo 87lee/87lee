@@ -59,9 +59,9 @@ class OfoBicycle extends \yii\db\ActiveRecord
         ADD COLUMN `create_time`  timestamp NOT NULL AFTER `pwd`,
         ADD COLUMN `update_time`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `create_time`;*/
         
-        if (!empty($post['pwd']) && $post['number']) {
+        if (!empty($post['password']) && $post['number']) {
             $this->number = $post['number'];
-            $this->pwd = $post['pwd'];
+            $this->pwd = $post['password'];
             $time = \Yii::$app->formatter->asDatetime(time());
             $this->create_time = $time;
             $this->update_time = $time;
@@ -69,7 +69,7 @@ class OfoBicycle extends \yii\db\ActiveRecord
             if (!empty($one->id)) {
                 $one = $this->findOne($one->id);
                 $one->number = $post['number'];
-                $one->pwd = $post['pwd'];
+                $one->pwd = $post['password'];
                 $one->save();
             }else{
                 $this->save();
