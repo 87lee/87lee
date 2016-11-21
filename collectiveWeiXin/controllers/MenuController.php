@@ -17,7 +17,7 @@ class MenuController extends \yii\web\Controller
                     "sub_button": [
                         {
                             "type": "view", 
-                            "name": "添加小黄车", 
+                            "name": "小黄车", 
                             "url": "'.Url::to('collectiveWeiXin/ofo-bicycle/index',true).'", 
                             "sub_button": [ ]
                         }
