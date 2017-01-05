@@ -16,8 +16,12 @@ class weixin extends \yii\base\Module
         $params = $this->params;
         \Yii::trace('请求获取微信access_token');
         $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' . $params['collectiveWeixinConfig']['appId'] . '&secret='.$params['collectiveWeixinConfig']['appsecret'];
-        $str = \app\helpers\Url::getUrl($url);
-        if (!empty($str['result'])&& $str['result'] == 'fail' ){
+        for ($i=0; $i < 10; $i++) { 
+            $str = \app\helpers\Url::getUrl($url);
+            if (empty($str['result']) ||  (!empty($str['result']) && $str['result'] != 'fail') || (!empty($str['http_code']) && $str['http_code'] != '0')) break;
+        }
+        // $str = \app\helpers\Url::getUrl($url);
+        if (!empty($str['result']) && $str['result'] == 'fail' ){
             \Yii::trace('请求获取微信access_token失败');
             die('远程获取access_token失败:'.$str['http_code']);
         }else{
