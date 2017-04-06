@@ -5,6 +5,7 @@ namespace app\collectiveWeiXin\controllers;
 class OfoBicycleController extends \yii\web\Controller
 {
 	public $layout = false;
+    public $enableCsrfValidation = false;//去除CSRF令牌验证
     public function actionIndex()
     {
         return $this->render('index',['title'=>'小黄车']);
