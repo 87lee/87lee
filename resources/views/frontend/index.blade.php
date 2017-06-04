@@ -38,7 +38,7 @@
             </div>
         </header>
         <!-- Navigation area -->
-        <!-- @include('navigation') -->
+        <!-- @include('frontend.navigation') -->
         <!-- <section id="navigation">
             <div class="container">
                 <div class="row">

@@ -14,19 +14,19 @@
 Route::group([],function ()
 {
 	Route::get('/', function () {
-	    return view('index');
+	    return view('frontend.index');
 	});
 	Route::get('/services', function () {
-	    return view('services');
+	    return view('frontend.services');
 	});
 	Route::get('/portfolio', function () {
-	    return view('portfolio');
+	    return view('frontend.portfolio');
 	});
 	Route::get('/testimonial', function () {
-	    return view('testimonial');
+	    return view('frontend.testimonial');
 	});
 	Route::get('/contact', function () {
-	    return view('contact');
+	    return view('frontend.contact');
 	});
 });
 

@@ -33,7 +33,7 @@
                 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <!-- Navigation area -->
-        @include('navigation')
+        @include('frontend.navigation')
         <!-- Content Area -->
         <!-- services section -->
         <section id="services" class="service-area">
@@ -245,7 +245,7 @@
         </section> -->
         <!-- contact -->
         <!-- Footer Area -->
-        @include('footer')
+        @include('frontend.footer')
         <!-- Necessery scripts -->
         <script src="assets/js/jquery-2.1.3.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
