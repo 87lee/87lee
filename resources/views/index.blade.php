@@ -7,7 +7,6 @@
 <html class="no-js"> <!--<![endif]-->
     <head>
         <title>Mr. Dark Lee</title>
-
         <!-- meta -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,18 +20,14 @@
         <!-- <link rel="stylesheet" href="assets/css/owl.theme.css"> -->
         <!-- <link rel="stylesheet" href="assets/css/animate.css"> -->
         <link rel="stylesheet" href="assets/css/style.css">
-
         <!-- google fonts -->
         <!-- <link href='http://fonts.useso.com/css?family=Dosis:200,300,400,500|Lato:300,400,700,900,300italic,400italic,700italic,900italic|Raleway:400,200,300,500,100|Titillium+Web:400,200,300italic,300,200italic' rel='stylesheet' type='text/css'> -->
-
         <script src="assets/js/modernizr.js"></script>
-
     </head>
     <body id="body">
         <!--[if lt IE 7]>
                 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-
         <!-- Header area -->
         <header id="header">
             <div class="center text-center">
@@ -40,11 +35,11 @@
                 <h4 class="subheadline">The Worst Front End Developer</h4>
             </div>
             <div class="bottom">
-                <a data-scroll href="/nav" class="scrollDown animated pulse" id="scrollToContent"><i class="pe-7s-angle-down-circle pe-va"></i></a>
+                <a data-scroll href="/services" class="scrollDown animated pulse" id="scrollToContent"><i class="pe-7s-angle-down-circle pe-va"></i></a>
             </div>
         </header>
-
         <!-- Navigation area -->
+        <!-- @include('navigation') -->
         <!-- <section id="navigation">
             <div class="container">
                 <div class="row">
@@ -70,12 +65,9 @@
                 </div>
             </div>            
         </section> -->
-        
         <!-- Content Area -->
         <!-- <div class="copyrights">Collect from <a href="http://www.cssmoban.com/" >企业网站模板</a></div> -->
-
         <!-- services section -->
-
         <!-- <section id="services" class="service-area">
             <div class="container">
                 <h2 class="block_title">Services</h2>
@@ -87,8 +79,7 @@
                                 <h3>Creative Idea</h3>
                                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum, commodi.</p>
                             </div>
-                        </div>
-                        
+                        </div> 
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <div class="services">
@@ -121,7 +112,6 @@
             </div>
         </section> -->
         <!-- services -->
-
         <!-- <section id="portfolio" class="portfolio-area">
             <div class="container">
                 <h2 class="block_title">My Works</h2>
@@ -193,9 +183,7 @@
             </div>
         </section> -->
         <!-- portfolio -->
-
         <!-- Testimonial Area -->
-
         <!-- <section id="testimonial" class="testimonial-area">
             <div class="container">
                 <h2 class="block_title">Testimonials</h2>
@@ -229,9 +217,7 @@
             </div>
         </section> -->
         <!-- testimonial -->
-
         <!-- Contact Area -->
-
         <!-- <section id="contact" class="mapWrap">
             <div id="googleMap" style="width:100%;"></div>
             <div id="contact-area">
@@ -289,9 +275,7 @@
             </div>
         </section> -->
         <!-- contact -->
-
         <!-- Footer Area -->
-
         <!-- <footer>
             <div class="container">
                 <div class="row">
@@ -304,7 +288,6 @@
                 </div>
             </div>
         </footer> -->
-
         <!-- Necessery scripts -->
         <script src="assets/js/jquery-2.1.3.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>

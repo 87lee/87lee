@@ -1,10 +1,8 @@
 (function($,sr){
-
   // debouncing function from John Hann
   // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
   var debounce = function (func, threshold, execAsap) {
       var timeout;
-
       return function debounced () {
           var obj = this, args = arguments;
           function delayed () {
@@ -125,7 +123,7 @@ $(document).ready(function(){
 
 
 
-var menu = $('#navigation');
+/*var menu = $('#navigation');
 var origOffsetY = menu.offset().top;
 
 function scroll() {
@@ -138,10 +136,7 @@ function scroll() {
        $('#services').removeClass('exp');
        //$('.content').removeClass('menu-padding');
    }
-
-
-
-}
+}*/
 
  document.onscroll = scroll;
 
@@ -167,7 +162,7 @@ function scroll() {
   // google map
   ///////////////////////////////
 
-function initialize()
+/*function initialize()
 {
 var mapProp = {
   center:new google.maps.LatLng(51.508742,-0.120850),
@@ -178,8 +173,8 @@ var mapProp = {
   };
 var map=new google.maps.Map(document.getElementById("googleMap")
   ,mapProp);
-}
+}*/
 
-google.maps.event.addDomListener(window, 'load', initialize);
+// google.maps.event.addDomListener(window, 'load', initialize);
 
 

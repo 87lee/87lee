@@ -16,8 +16,17 @@ Route::group([],function ()
 	Route::get('/', function () {
 	    return view('index');
 	});
-	Route::get('/nav', function () {
-	    return view('nav');
+	Route::get('/services', function () {
+	    return view('services');
+	});
+	Route::get('/portfolio', function () {
+	    return view('portfolio');
+	});
+	Route::get('/testimonial', function () {
+	    return view('testimonial');
+	});
+	Route::get('/contact', function () {
+	    return view('contact');
 	});
 });
 

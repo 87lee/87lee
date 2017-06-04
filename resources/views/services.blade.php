@@ -32,43 +32,11 @@
         <!--[if lt IE 7]>
                 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-
-        <!-- Header area -->
-        
-
         <!-- Navigation area -->
-        <section id="navigation">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-6">
-                        <div class="logo"><a data-scroll href="/" class="logo-text">Dark Lee</a></div>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class="nav">
-                            <a href="#" data-placement="bottom" title="Menu" class="menu" data-toggle="dropdown"><i class="pe-7s-menu"></i></a>
-                             <div class="dropdown-menu">
-                                 <div class="arrow-up"></div>
-                                 <ul>
-                                     <li><a data-scroll href="/">Home <i class="pe-7s-home"></i></a><span class="menu-effect"></span></li>
-                                     <li><a data-scroll href="#services">Service <i class="pe-7s-config"></i></a><span class="menu-effect"></span></li>
-                                     <li><a data-scroll href="#portfolio">Portfolio <i class="pe-7s-glasses"></i></a><span class="menu-effect"></span></li>
-                                     <li><a data-scroll href="#testimonial">Testimonial <i class="pe-7s-comment"></i><span class="menu-effect"></span></a></li>
-                                     <li><a data-scroll href="#contact">Contact <i class="pe-7s-help1"></i></a><span class="menu-effect"></span></li>
-                                 </ul>
-                             </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>            
-        </section>
-        
+        @include('navigation')
         <!-- Content Area -->
-        <!-- <div class="copyrights">Collect from <a href="http://www.cssmoban.com/" >企业网站模板</a></div> -->
-
         <!-- services section -->
-
-        <!-- <section id="services" class="service-area">
+        <section id="services" class="service-area">
             <div class="container">
                 <h2 class="block_title">Services</h2>
                 <div class="row">
@@ -111,9 +79,8 @@
                     </div>
                 </div>
             </div>
-        </section> -->
+        </section>
         <!-- services -->
-
         <!-- <section id="portfolio" class="portfolio-area">
             <div class="container">
                 <h2 class="block_title">My Works</h2>
@@ -185,9 +152,7 @@
             </div>
         </section> -->
         <!-- portfolio -->
-
         <!-- Testimonial Area -->
-
         <!-- <section id="testimonial" class="testimonial-area">
             <div class="container">
                 <h2 class="block_title">Testimonials</h2>
@@ -221,9 +186,7 @@
             </div>
         </section> -->
         <!-- testimonial -->
-
         <!-- Contact Area -->
-
         <!-- <section id="contact" class="mapWrap">
             <div id="googleMap" style="width:100%;"></div>
             <div id="contact-area">
@@ -281,22 +244,8 @@
             </div>
         </section> -->
         <!-- contact -->
-
         <!-- Footer Area -->
-
-        <!-- <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <p class="copyright">© Copyright 2015 </p>
-                    </div>
-                    <div class="col-sm-6">
-                        <p class="designed">Copyright &copy; 2015.Company name All rights reserved.More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
-                    </div>
-                </div>
-            </div>
-        </footer> -->
-
+        @include('footer')
         <!-- Necessery scripts -->
         <script src="assets/js/jquery-2.1.3.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
